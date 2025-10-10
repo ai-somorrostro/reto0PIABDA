@@ -1,0 +1,32 @@
+# ==========================================================
+# Proyecto: Reto 0 - PIABDA
+# Dependencias generales del entorno Python
+# ==========================================================
+
+# --- Librerías base ---
+requests
+pandas
+numpy
+
+# --- InfluxDB (gestión de series temporales) ---
+influxdb-client
+
+# --- Notebooks interactivos ---
+jupyter
+notebook
+
+# --- Visualización y análisis de datos ---
+matplotlib
+seaborn
+
+# --- Variables de entorno y automatización ---
+python-dotenv
+docker
+
+# --- Manejo de fechas y tiempos ---
+python-dateutil
+
+# ==========================================================
+# Instalación recomendada:
+#     pip install -r requirements.txt
+# ==========================================================
