@@ -1,0 +1,229 @@
+[
+    {
+        "id": "26dda7a16440aa20",
+        "type": "inject",
+        "z": "0c9ff32313b964c6",
+        "name": "Marca timpo-solictd-API",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "3",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 210,
+        "y": 160,
+        "wires": [
+            [
+                "8b6993ab7f481bee",
+                "14a67aa39d342e32",
+                "8c054eca9a357b6a",
+                "f783a9343e3240d7"
+            ]
+        ]
+    },
+    {
+        "id": "f783a9343e3240d7",
+        "type": "http request",
+        "z": "0c9ff32313b964c6",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://api.openweathermap.org/data/2.5/weather?q=Bilbao&appid=746571fdc5b8d517e1d6d0bec7946ca1&units=metric",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 470,
+        "y": 160,
+        "wires": [
+            [
+                "72307cfceae8f6cf"
+            ]
+        ]
+    },
+    {
+        "id": "c94df3b64897c84f",
+        "type": "debug",
+        "z": "0c9ff32313b964c6",
+        "name": "debug-Datos-real-time,",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1100,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "b690044ee05e011d",
+        "type": "influxdb out",
+        "z": "0c9ff32313b964c6",
+        "influxdb": "74bda5dfdf4e2d16",
+        "name": "influxdb-iss",
+        "measurement": "weather-realtime",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "somorrostro",
+        "bucket": "RETO0-Data",
+        "x": 1090,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "d6e45c430d904024",
+        "type": "comment",
+        "z": "0c9ff32313b964c6",
+        "name": "RETO 0, Extracción datos tiempo real OpenWeather**",
+        "info": "",
+        "x": 400,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "8b6993ab7f481bee",
+        "type": "http request",
+        "z": "0c9ff32313b964c6",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://api.openweathermap.org/data/2.5/weather?q=Madrid&appid=746571fdc5b8d517e1d6d0bec7946ca1&units=metric",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 470,
+        "y": 240,
+        "wires": [
+            [
+                "72307cfceae8f6cf"
+            ]
+        ]
+    },
+    {
+        "id": "72307cfceae8f6cf",
+        "type": "function",
+        "z": "0c9ff32313b964c6",
+        "name": "Extracción-Datos diferentes ciudades",
+        "func": "let d = new Date();\n\n// Datos principales del tiempo\nlet datos = {\n    ciudad: msg.payload.name,  // Nombre de la ciudad desde la API\n    fecha_hora: d.toISOString(),\n    temperatura: msg.payload.main.temp,\n    sensacion_termica: msg.payload.main.feels_like,\n    humedad: msg.payload.main.humidity,\n    presion: msg.payload.main.pressure,\n    viento_velocidad: msg.payload.wind.speed,\n    viento_direccion: msg.payload.wind.deg\n};\n\n// Estructura del payload (valores + tag)\nmsg.payload = [\n    {\n        temperatura: datos.temperatura,\n        sensacion_termica: datos.sensacion_termica,\n        humedad: datos.humedad,\n        presion: datos.presion,\n        viento_velocidad: datos.viento_velocidad,\n        viento_direccion: datos.viento_direccion,\n        fecha_hora: datos.fecha_hora\n    },\n    {\n        tag_ciudad: datos.ciudad\n    }\n];\n\n// Configuración para InfluxDB\nmsg.measurement = \"weather-realtime\";\nmsg.tags = { ciudad: datos.ciudad };\n\n// Enviar al siguiente nodo (InfluxDB o debug)\nreturn msg;\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 770,
+        "y": 160,
+        "wires": [
+            [
+                "b690044ee05e011d",
+                "c94df3b64897c84f"
+            ]
+        ]
+    },
+    {
+        "id": "2d8227346f92a7fa",
+        "type": "comment",
+        "z": "0c9ff32313b964c6",
+        "name": "Datos ciudad Bilbao.",
+        "info": "",
+        "x": 350,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "14a67aa39d342e32",
+        "type": "http request",
+        "z": "0c9ff32313b964c6",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://api.openweathermap.org/data/2.5/weather?q=Barcelona&appid=746571fdc5b8d517e1d6d0bec7946ca1&units=metric",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 470,
+        "y": 300,
+        "wires": [
+            [
+                "72307cfceae8f6cf"
+            ]
+        ]
+    },
+    {
+        "id": "8c054eca9a357b6a",
+        "type": "http request",
+        "z": "0c9ff32313b964c6",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://api.openweathermap.org/data/2.5/weather?q=Sevilla&appid=746571fdc5b8d517e1d6d0bec7946ca1&units=metric",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 470,
+        "y": 360,
+        "wires": [
+            [
+                "72307cfceae8f6cf"
+            ]
+        ]
+    },
+    {
+        "id": "74bda5dfdf4e2d16",
+        "type": "influxdb",
+        "hostname": "127.0.0.1",
+        "port": 8086,
+        "protocol": "http",
+        "database": "database",
+        "name": "localhost2",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "2.0",
+        "url": "http://localhost:8086",
+        "timeout": 10,
+        "rejectUnauthorized": true
+    },
+    {
+        "id": "c4b72d9d4535200e",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-contrib-influxdb": "0.7.0"
+        }
+    }
+]

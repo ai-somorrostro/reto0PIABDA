@@ -46,15 +46,19 @@ def obtener_datos():
         data = response.json()
 
         if response.status_code == 200:
-            punto = Point("weather-realtime-pandas") \
-                .tag("ciudad", data["name"]) \
-                .field("temperatura", float(data["main"]["temp"])) \
-                .field("sensacion_termica", float(data["main"]["feels_like"])) \
-                .field("humedad", int(data["main"]["humidity"])) \
-                .field("presion", int(data["main"]["pressure"])) \
-                .field("viento_velocidad", float(data["wind"]["speed"])) \
-                .field("viento_direccion", int(data["wind"].get("deg", 0))) \
+            # Añadimos fecha_hora como field para coherencia con Node-RED
+            punto = (
+                Point("weather-realtime-pandas") # weather-realtime-pandas
+                .tag("ciudad", data["name"])
+                .field("temperatura", float(data["main"]["temp"]))
+                .field("sensacion_termica", float(data["main"]["feels_like"]))
+                .field("humedad", int(data["main"]["humidity"]))
+                .field("presion", int(data["main"]["pressure"]))
+                .field("viento_velocidad", float(data["wind"]["speed"]))
+                .field("viento_direccion", int(data["wind"].get("deg", 0)))
+                .field("fecha_hora", datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"))
                 .time(datetime.utcnow(), WritePrecision.NS)
+            )
 
             write_api.write(bucket=bucket, org=org, record=punto)
             mensaje = f"✅ Datos insertados en InfluxDB ({data['name']}) | 🌡️ {data['main']['temp']}°C | 💧 {data['main']['humidity']}% | 🌬️ {data['wind']['speed']} m/s"
