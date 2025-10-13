@@ -100,7 +100,7 @@ bda/datasets/
 bda/datasets/*.csv
 
 # Ignorar dashboards JSON hasta que estén definidos
-bda/grafana/dashboards/*.json
+# bda/grafana/dashboards/*.json
 
 # Ignorar carpeta de logs y sus archivos generados
 bda/logs/
