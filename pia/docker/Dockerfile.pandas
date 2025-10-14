@@ -1,0 +1,14 @@
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Copiamos los requerimientos desde la raíz del repositorio
+COPY requirements.txt .
+
+# Instalamos las dependencias
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiamos el script desde su ubicación correcta
+COPY bda/scripts_python/weather_current.py .
+
+CMD ["python", "weather_current.py"]

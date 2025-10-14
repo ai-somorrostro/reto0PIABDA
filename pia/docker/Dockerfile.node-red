@@ -1,0 +1,15 @@
+# Dockerfile.node-red
+FROM nodered/node-red:latest
+
+# Instalar el nodo InfluxDB
+RUN npm install node-red-contrib-influxdb
+
+# Copiar flujo predefinido
+COPY bda/node-red/flujos/flujo_reto.json /data/flows.json
+
+# Copiar script para inyectar token
+COPY pia/docker/nodered/set_token.sh /usr/src/node-red/set_token.sh
+RUN chmod +x /usr/src/node-red/set_token.sh
+
+# Entrada: reemplazar token en flujo antes de lanzar Node-RED
+ENTRYPOINT ["/bin/bash", "-c", "/usr/src/node-red/set_token.sh && npm start"]
