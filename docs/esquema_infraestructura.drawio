@@ -1,0 +1,128 @@
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                           RETO 0 – FLUJO DE DATOS BDA                        │
+│          Integración de Node-RED, Python (Pandas), InfluxDB y Grafana        │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+                          ┌──────────────────────────────┐
+                          │       OpenWeather API        │
+                          │ (Datos meteorológicos JSON)  │
+                          │   Endpoint: /data/2.5/weather│
+                          └──────────────┬───────────────┘
+                                         │
+                   ┌─────────────────────┼─────────────────────┐
+                   │                                           │
+                   ▼                                           ▼
+       ┌──────────────────────────────┐          ┌──────────────────────────────┐
+       │          NODE-RED            │          │     SCRIPT PYTHON (PANDAS)   │
+       │  Flujo: “Flujo 5 – Reto 0”   │          │ Archivo: weather_current.py  │
+       │──────────────────────────────│          │──────────────────────────────│
+       │ - Nodos:                     │          │ - Ciudad: Granada            │
+       │   • inject (cada 10s)        │          │ - Intervalo: 10 s            │
+       │   • 4 http request (ciudades │          │ - Variables .env: URL, Token │
+       │     Bilbao, Madrid,          │          │   Org, Bucket, API_KEY, City │
+       │     Barcelona, Sevilla)      │          │ - Campos enviados:           │
+       │   • function (procesa JSON)  │          │   temperatura, humedad,      │
+       │   • influxdb out (envío BDD) │          │   presion, viento_dir, etc.  │
+       │                              │          │ - Log: weather_granada.log   │
+       └──────────────┬───────────────┘          └──────────────┬───────────────┘
+                      │                                         │
+                      │      Escritura de datos (HTTP Line API) │
+                      │                                         │
+                      ▼                                         ▼
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                                 INFLUXDB                                     │
+│──────────────────────────────────────────────────────────────────────────────│
+│  ORG: somorrostro       URL: http://localhost:8086                           │
+│──────────────────────────────────────────────────────────────────────────────│
+│                                BUCKETS                                       │
+│  • RETO0-Data   → Datos en tiempo real (Node-RED)                            │
+│  • RETO0-PANDAS → Datos de análisis (Python)                                 │
+│──────────────────────────────────────────────────────────────────────────────│
+│                            MEASUREMENTS                                      │
+│  1. weather-realtime              (desde Node-RED)                           │
+│  2. weather-realtime-pandas       (desde Python)                             │
+│──────────────────────────────────────────────────────────────────────────────│
+│ TAGS                                                                         │
+│  • tag_ciudad → {Bilbao, Madrid, Barcelona, Seville}  (Node-RED)             │
+│  • ciudad     → {Granada}                             (Python)               │
+│──────────────────────────────────────────────────────────────────────────────│
+│ FIELDS                                                                       │
+│  temperatura (float)     sensacion_termica (float)                           │
+│  humedad (int)            presion (int)                                      │
+│  viento_velocidad (float) viento_direccion (int)                             │
+│  fecha_hora (string ISO)                                                     │
+│──────────────────────────────────────────────────────────────────────────────│
+│ CONSULTAS FLUX EJEMPLO                                                       │
+│  from(bucket:"RETO0-Data")                                                   │
+│    |> range(start:-15m)                                                      │
+│    |> filter(fn:(r)=>r._measurement=="weather-realtime")                     │
+│    |> group(columns:["tag_ciudad"])                                          │
+│    |> last()                                                                 │
+│──────────────────────────────────────────────────────────────────────────────│
+│ VISUALIZACIÓN DE DATOS EN DATA EXPLORER                                      │
+│  • Bucket RETO0-Data → filtro por tag_ciudad                                 │
+│  • Bucket RETO0-PANDAS → filtro por ciudad                                   │
+└──────────────────────────────────────────────────────────────────────────────┘
+                      │                                         │
+                      │                                         │
+                      ▼                                         ▼
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                                  GRAFANA                                     │
+│──────────────────────────────────────────────────────────────────────────────│
+│  FOLDER: “Reto-0”                                                            │
+│──────────────────────────────────────────────────────────────────────────────│
+│  DASHBOARDS                                                                  │
+│  1. Data-Real-Time-Node-red                                                  │
+│     • Fuente: InfluxDB → RETO0-Data                                          │
+│     • Measurement: weather-realtime                                          │
+│     • Ciudades: Bilbao, Madrid, Barcelona, Seville                           │
+│     • Paneles: Temperaturas en tiempo real                                   │
+│     • Alerta: “Alguna ciudad supera 29°C”                                    │
+│        - Query A: mean() por ciudad                                          │
+│        - Condición: A > 29                                                   │
+│──────────────────────────────────────────────────────────────────────────────│
+│  2. Data-Real-Time-Pandas                                                    │
+│     • Fuente: InfluxDB → RETO0-PANDAS                                        │
+│     • Measurement: weather-realtime-pandas                                   │
+│     • Ciudad: Granada                                                        │
+│     • Paneles: Temperatura y Humedad                                         │
+│     • Alerta: “Granada supera 20°C”                                          │
+│        - Query A: last() temperatura                                         │
+│        - Condición: A > 20                                                   │
+│──────────────────────────────────────────────────────────────────────────────│
+│  ROLES Y PERMISOS                                                            │
+│  • Cúpula Directiva → View (solo lectura)                                    │
+│  • Departamento de Análisis → View (dashboards de métricas)                  │
+│  • Departamento IT → Edit (alertas y paneles técnicos)                       │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                            RESUMEN DEL FLUJO DE DATOS                        │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+          [OpenWeather API]
+                   │
+                   ▼
+   ┌─────────────────────────────────────────────────────────────┐
+   │ Node-RED (4 ciudades)   │   Python Script (Granada)         │
+   │ → Envían datos JSON     │   → Limpieza y escritura directa  │
+   │ → Insertan en RETO0-Data│   → Inserta en RETO0-PANDAS       │
+   └───────────────┬─────────┴───────────────┬───────────────────┘
+                   │                         │
+                   ▼                         ▼
+           [InfluxDB Buckets]          [InfluxDB Buckets]
+             RETO0-Data                   RETO0-PANDAS
+                   │                         │
+                   ▼                         ▼
+         [Grafana Dashboard 1]       [Grafana Dashboard 2]
+          Node-RED Real Time           Pandas Real Time
+             (4 ciudades)                (Granada)
+                   │                         │
+                   ▼                         ▼
+             Alertas: >29°C            Alerta: >20°C
+                   │                         │
+                   ▼                         ▼
+                Visualización conjunta y monitorización en Grafana

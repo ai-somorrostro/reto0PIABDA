@@ -1,0 +1,261 @@
+{
+    "apiVersion": 1,
+    "groups": [
+        {
+            "orgId": 1,
+            "name": "Evaluation-group1",
+            "folder": "Reto-0",
+            "interval": "10s",
+            "rules": [
+                {
+                    "uid": "cf0wufjonwyyob",
+                    "title": "Temperatura-Granada",
+                    "condition": "C",
+                    "data": [
+                        {
+                            "refId": "A",
+                            "relativeTimeRange": {
+                                "from": 900,
+                                "to": 0
+                            },
+                            "datasourceUid": "ceyg249jto3cwf",
+                            "model": {
+                                "datasource": {
+                                    "type": "influxdb",
+                                    "uid": "ceyg249jto3cwf"
+                                },
+                                "instant": false,
+                                "intervalMs": 1000,
+                                "maxDataPoints": 43200,
+                                "query": "from(bucket: \"RETO0-PANDAS\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"weather-realtime-pandas\")\n  |> filter(fn: (r) => r[\"_field\"] == \"temperatura\")\n  |> filter(fn: (r) => r[\"ciudad\"] == \"Granada\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"last\")",
+                                "range": true,
+                                "refId": "A"
+                            }
+                        },
+                        {
+                            "refId": "B",
+                            "relativeTimeRange": {
+                                "from": 0,
+                                "to": 0
+                            },
+                            "datasourceUid": "__expr__",
+                            "model": {
+                                "conditions": [
+                                    {
+                                        "evaluator": {
+                                            "params": [],
+                                            "type": "gt"
+                                        },
+                                        "operator": {
+                                            "type": "and"
+                                        },
+                                        "query": {
+                                            "params": [
+                                                "B"
+                                            ]
+                                        },
+                                        "reducer": {
+                                            "params": [],
+                                            "type": "last"
+                                        },
+                                        "type": "query"
+                                    }
+                                ],
+                                "datasource": {
+                                    "type": "__expr__",
+                                    "uid": "__expr__"
+                                },
+                                "expression": "A",
+                                "intervalMs": 1000,
+                                "maxDataPoints": 43200,
+                                "reducer": "last",
+                                "refId": "B",
+                                "type": "reduce"
+                            }
+                        },
+                        {
+                            "refId": "C",
+                            "relativeTimeRange": {
+                                "from": 0,
+                                "to": 0
+                            },
+                            "datasourceUid": "__expr__",
+                            "model": {
+                                "conditions": [
+                                    {
+                                        "evaluator": {
+                                            "params": [
+                                                20
+                                            ],
+                                            "type": "gt"
+                                        },
+                                        "operator": {
+                                            "type": "and"
+                                        },
+                                        "query": {
+                                            "params": [
+                                                "C"
+                                            ]
+                                        },
+                                        "reducer": {
+                                            "params": [],
+                                            "type": "last"
+                                        },
+                                        "type": "query"
+                                    }
+                                ],
+                                "datasource": {
+                                    "type": "__expr__",
+                                    "uid": "__expr__"
+                                },
+                                "expression": "B",
+                                "intervalMs": 1000,
+                                "maxDataPoints": 43200,
+                                "refId": "C",
+                                "type": "threshold"
+                            }
+                        }
+                    ],
+                    "dashboardUid": "e7d508ca-d8fd-445c-b7d1-223917864cf2",
+                    "panelId": 1,
+                    "noDataState": "NoData",
+                    "execErrState": "Error",
+                    "keepFiringFor": "20s",
+                    "annotations": {
+                        "__dashboardUid__": "e7d508ca-d8fd-445c-b7d1-223917864cf2",
+                        "__panelId__": "1",
+                        "summary": "La temperatura ha superado los 20 °C."
+                    },
+                    "isPaused": false,
+                    "notification_settings": {
+                        "receiver": "Contacto-iker"
+                    }
+                },
+                {
+                    "uid": "df0xbs88vmnlsb",
+                    "title": "Temperaturas-4-Ciudades",
+                    "condition": "C",
+                    "data": [
+                        {
+                            "refId": "A",
+                            "relativeTimeRange": {
+                                "from": 900,
+                                "to": 0
+                            },
+                            "datasourceUid": "ceyg249jto3cwf",
+                            "model": {
+                                "datasource": {
+                                    "type": "influxdb",
+                                    "uid": "ceyg249jto3cwf"
+                                },
+                                "instant": false,
+                                "intervalMs": 1000,
+                                "maxDataPoints": 43200,
+                                "query": "from(bucket: \"RETO0-Data\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"weather-realtime\")\n  |> filter(fn: (r) => r[\"_field\"] == \"temperatura\")\n  |> filter(fn: (r) => r[\"tag_ciudad\"] == \"Seville\" or r[\"tag_ciudad\"] == \"Madrid\" or r[\"tag_ciudad\"] == \"Bilbao\" or r[\"tag_ciudad\"] == \"Barcelona\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"last\")",
+                                "range": true,
+                                "refId": "A"
+                            }
+                        },
+                        {
+                            "refId": "B",
+                            "relativeTimeRange": {
+                                "from": 0,
+                                "to": 0
+                            },
+                            "datasourceUid": "__expr__",
+                            "model": {
+                                "conditions": [
+                                    {
+                                        "evaluator": {
+                                            "params": [],
+                                            "type": "gt"
+                                        },
+                                        "operator": {
+                                            "type": "and"
+                                        },
+                                        "query": {
+                                            "params": [
+                                                "B"
+                                            ]
+                                        },
+                                        "reducer": {
+                                            "params": [],
+                                            "type": "last"
+                                        },
+                                        "type": "query"
+                                    }
+                                ],
+                                "datasource": {
+                                    "type": "__expr__",
+                                    "uid": "__expr__"
+                                },
+                                "expression": "A",
+                                "intervalMs": 1000,
+                                "maxDataPoints": 43200,
+                                "reducer": "last",
+                                "refId": "B",
+                                "type": "reduce"
+                            }
+                        },
+                        {
+                            "refId": "C",
+                            "relativeTimeRange": {
+                                "from": 0,
+                                "to": 0
+                            },
+                            "datasourceUid": "__expr__",
+                            "model": {
+                                "conditions": [
+                                    {
+                                        "evaluator": {
+                                            "params": [
+                                                29
+                                            ],
+                                            "type": "gt"
+                                        },
+                                        "operator": {
+                                            "type": "and"
+                                        },
+                                        "query": {
+                                            "params": [
+                                                "C"
+                                            ]
+                                        },
+                                        "reducer": {
+                                            "params": [],
+                                            "type": "last"
+                                        },
+                                        "type": "query"
+                                    }
+                                ],
+                                "datasource": {
+                                    "type": "__expr__",
+                                    "uid": "__expr__"
+                                },
+                                "expression": "B",
+                                "intervalMs": 1000,
+                                "maxDataPoints": 43200,
+                                "refId": "C",
+                                "type": "threshold"
+                            }
+                        }
+                    ],
+                    "dashboardUid": "51c4a6ad-937a-45e5-9dae-f83416995a6d",
+                    "panelId": 6,
+                    "noDataState": "NoData",
+                    "execErrState": "Error",
+                    "for": "1m",
+                    "annotations": {
+                        "__dashboardUid__": "51c4a6ad-937a-45e5-9dae-f83416995a6d",
+                        "__panelId__": "6",
+                        "summary": "La temperatura ha superado los 29 °C.\nRevisa el dashboard."
+                    },
+                    "isPaused": false,
+                    "notification_settings": {
+                        "receiver": "Contacto-iker"
+                    }
+                }
+            ]
+        }
+    ]
+}

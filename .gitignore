@@ -1,1 +1,143 @@
-__pycache__/\nvenv/\n*.json\n*.csv\n*.log
+# ==========================================================
+# .gitignore - Proyecto RETO0PIABDA
+# Autor: Iker
+# Descripción: Configuración para excluir archivos temporales,
+# logs, entornos virtuales, datos sensibles y ficheros locales
+# que no deben subirse al repositorio.
+# ==========================================================
+
+
+# --- ARCHIVOS Y CACHÉS PYTHON ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+*.so
+
+
+# --- ENTORNOS VIRTUALES ---
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+
+# --- LOGS Y TEMPORALES ---
+logs/
+*.log
+*.tmp
+*.bak
+
+
+# --- ARCHIVOS DE CONFIGURACIÓN SENSIBLES ---
+.env
+.envrc
+.env.local
+.env.*.local
+# Archivo de ejemplo permitido (para subir al repo)
+!.env.example
+
+
+# --- NOTEBOOKS Y CHECKPOINTS ---
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+*.ipynb_autosave
+
+
+# --- VISUAL STUDIO CODE ---
+.vscode/
+*.code-workspace
+
+
+# --- ARCHIVOS DE SISTEMA ---
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+
+# --- TESTS, CACHE Y COBERTURA ---
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.pycover
+.pytest_cache/
+htmlcov/
+
+
+# --- HERRAMIENTAS DE ANÁLISIS Y TIPO ---
+.mypy_cache/
+.pyre/
+.pytype/
+.ruff_cache/
+
+
+# --- DOCUMENTACIÓN TEMPORAL ---
+docs/_build/
+docs/*.tmp
+docs/*.log
+docs/*.aux
+
+
+# ==========================================================
+# 🧩 EXCLUSIONES TEMPORALES DEL RETO (pueden habilitarse después)
+# ==========================================================
+
+# ⚠️ Archivos que NO deben subirse por ahora (temporalmente)
+# Descomenta cuando quieras incluirlos en los commits.
+
+# Dentro de la carpeta BDA:
+# Ignorar carpeta datasets y su CSV interno
+bda/datasets/
+bda/datasets/*.csv
+
+# Ignorar dashboards JSON hasta que estén definidos
+# bda/grafana/dashboards/*.json
+
+# Ignorar carpeta de logs y sus archivos generados
+bda/logs/
+bda/logs/*.log
+
+# Ignorar capturas de Grafana (imágenes temporales)
+docs/capturas_grafana/*.png
+docs/capturas_grafana/*.jpg
+docs/capturas_grafana/*.jpeg
+
+
+# Ignorar temporalmente archivos grandes o documentales de docs/
+docs/esquema_infraestructura.png
+docs/memoria_reto.pdf
+
+
+# ==========================================================
+# 🧩 EXCLUSIONES PERMANENTES
+# ==========================================================
+
+# No subir configuraciones internas de GitHub
+.github/
+
+# ==========================================================
+# 🧾 ARCHIVOS Y DIRECTORIOS QUE SÍ SE DEBEN SUBIR
+# ==========================================================
+
+!README.md
+!LICENSE
+!requirements.txt
+!*.ipynb
+!bda/scripts_python/*.py
+!bda/influxdb/configuraciones_flux/*.md
+!bda/grafana/roles_y_alertas/*
+!docs/
+!pia/
+
+# ==========================================================
+# FIN DEL ARCHIVO .gitignore PERSONALIZADO
+# ==========================================================
