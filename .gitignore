@@ -107,14 +107,14 @@ bda/logs/
 bda/logs/*.log
 
 # Ignorar capturas de Grafana (imágenes temporales)
-docs/capturas_grafana/*.png
-docs/capturas_grafana/*.jpg
-docs/capturas_grafana/*.jpeg
+# docs/capturas_grafana/*.png
+# docs/capturas_grafana/*.jpg
+# docs/capturas_grafana/*.jpeg
 
 
 # Ignorar temporalmente archivos grandes o documentales de docs/
-docs/esquema_infraestructura.png
-docs/memoria_reto.pdf
+# docs/esquema_infraestructura.png
+# docs/memoria_reto.pdf
 
 
 # ==========================================================
