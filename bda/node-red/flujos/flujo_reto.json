@@ -149,9 +149,9 @@
         "id": "2d8227346f92a7fa",
         "type": "comment",
         "z": "0c9ff32313b964c6",
-        "name": "Datos ciudad Bilbao.",
+        "name": "Datos ciudades",
         "info": "",
-        "x": 350,
+        "x": 340,
         "y": 100,
         "wires": []
     },
@@ -219,7 +219,7 @@
         "rejectUnauthorized": true
     },
     {
-        "id": "c4b72d9d4535200e",
+        "id": "1f05a6c4c15cb6e4",
         "type": "global-config",
         "env": [],
         "modules": {
