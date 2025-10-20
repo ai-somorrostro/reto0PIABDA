@@ -5,7 +5,7 @@
 from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
 import requests
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import time
 import logging
 import os
@@ -46,22 +46,23 @@ def obtener_datos():
         data = response.json()
 
         if response.status_code == 200:
-            # Añadimos fecha_hora como field para coherencia con Node-RED
+            now = datetime.now(timezone.utc)
+
             punto = (
-                Point("weather-realtime-pandas") # weather-realtime-pandas
-                .tag("ciudad", data["name"])
+                Point("weather-realtime")
+                .tag("tag_ciudad", data["name"])  # igual que en Node-RED
                 .field("temperatura", float(data["main"]["temp"]))
                 .field("sensacion_termica", float(data["main"]["feels_like"]))
-                .field("humedad", int(data["main"]["humidity"]))
-                .field("presion", int(data["main"]["pressure"]))
+                .field("humedad", float(data["main"]["humidity"]))      # corregido a float
+                .field("presion", float(data["main"]["pressure"]))      # corregido a float
                 .field("viento_velocidad", float(data["wind"]["speed"]))
-                .field("viento_direccion", int(data["wind"].get("deg", 0)))
-                .field("fecha_hora", datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"))
-                .time(datetime.utcnow(), WritePrecision.NS)
+                .field("viento_direccion", float(data["wind"].get("deg", 0)))  # también float
+                .field("fecha_hora", now.strftime("%Y-%m-%d %H:%M:%S"))
+                .time(now, WritePrecision.NS)
             )
 
             write_api.write(bucket=bucket, org=org, record=punto)
-            mensaje = f"✅ Datos insertados en InfluxDB ({data['name']}) | 🌡️ {data['main']['temp']}°C | 💧 {data['main']['humidity']}% | 🌬️ {data['wind']['speed']} m/s"
+            mensaje = f"✅ Datos insertados en InfluxDB (Granada) | 🌡️ {data['main']['temp']}°C | 💧 {data['main']['humidity']}% | 🌬️ {data['wind']['speed']} m/s"
             print(mensaje)
             logging.info(mensaje)
 
@@ -75,13 +76,12 @@ def obtener_datos():
         print(error_msg)
         logging.error(error_msg)
 
-
 # --- BUCLE PRINCIPAL ---
 print("1️⃣ Iniciando envío de datos en tiempo real (duración máxima: 1 hora).")
 print("2️⃣ Puedes detener el proceso en cualquier momento con Ctrl + C.\n")
 
 inicio = datetime.now()
-duracion = timedelta(hours=1)
+duracion = timedelta(hours=6)
 
 try:
     while datetime.now() - inicio < duracion:
@@ -94,4 +94,3 @@ finally:
     client.close()
     print("🔚 Conexión cerrada. Ejecución finalizada correctamente.")
     logging.info("🔚 Conexión cerrada. Ejecución finalizada correctamente.\n")
-

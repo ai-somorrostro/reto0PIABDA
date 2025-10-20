@@ -93,7 +93,7 @@
             "type": "influxdb",
             "uid": "ceyg249jto3cwf"
           },
-          "query": "from(bucket: \"RETO0-PANDAS\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"weather-realtime-pandas\")\n  |> filter(fn: (r) => r[\"_field\"] == \"temperatura\")\n  |> filter(fn: (r) => r[\"ciudad\"] == \"Granada\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"last\")",
+          "query": "from(bucket: \"RETO0-Data\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"weather-realtime\")\n  |> filter(fn: (r) => r[\"_field\"] == \"temperatura\")\n  |> filter(fn: (r) => r[\"tag_ciudad\"] == \"Granada\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"last\")",
           "refId": "A"
         }
       ],
@@ -155,7 +155,7 @@
       "pluginVersion": "12.1.1",
       "targets": [
         {
-          "query": "from(bucket: \"RETO0-PANDAS\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"weather-realtime-pandas\")\n  |> filter(fn: (r) => r[\"_field\"] == \"viento_velocidad\")\n  |> filter(fn: (r) => r[\"ciudad\"] == \"Granada\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"last\")",
+          "query": "from(bucket: \"RETO0-Data\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"weather-realtime\")\n  |> filter(fn: (r) => r[\"_field\"] == \"viento_velocidad\")\n  |> filter(fn: (r) => r[\"tag_ciudad\"] == \"Granada\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"last\")",
           "refId": "A"
         }
       ],
@@ -215,11 +215,26 @@
       "pluginVersion": "12.1.1",
       "targets": [
         {
-          "query": "from(bucket: \"RETO0-PANDAS\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"weather-realtime-pandas\")\n  |> filter(fn: (r) => r[\"_field\"] == \"sensacion_termica\")\n  |> filter(fn: (r) => r[\"ciudad\"] == \"Granada\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket: \"RETO0-Data\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"weather-realtime\")\n  |> filter(fn: (r) => r[\"_field\"] == \"sensacion_termica\")\n  |> filter(fn: (r) => r[\"tag_ciudad\"] == \"Granada\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"last\")",
           "refId": "A"
         }
       ],
       "title": "Media-Sensación-Termica",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Media sensación termica",
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "sensacion_termica Granada"
+              ],
+              "reducer": "mean"
+            }
+          }
+        }
+      ],
       "type": "gauge"
     },
     {
@@ -277,7 +292,7 @@
       "pluginVersion": "12.1.1",
       "targets": [
         {
-          "query": "from(bucket: \"RETO0-PANDAS\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"weather-realtime-pandas\")\n  |> filter(fn: (r) => r[\"_field\"] == \"presion\")\n  |> filter(fn: (r) => r[\"ciudad\"] == \"Granada\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"last\")",
+          "query": "from(bucket: \"RETO0-Data\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"weather-realtime\")\n  |> filter(fn: (r) => r[\"_field\"] == \"presion\")\n  |> filter(fn: (r) => r[\"tag_ciudad\"] == \"Granada\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"last\")",
           "refId": "A"
         }
       ],
@@ -292,12 +307,12 @@
     "list": []
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-3h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Data-Real-Time-Pandas",
   "uid": "e7d508ca-d8fd-445c-b7d1-223917864cf2",
-  "version": 13
+  "version": 23
 }
