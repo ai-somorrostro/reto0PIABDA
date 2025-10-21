@@ -8,7 +8,7 @@ COPY requirements.txt .
 # Instalamos las dependencias
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiamos el script desde su ubicación correcta
-COPY bda/scripts_python/weather_current.py .
+# Copiamos el script desde su nueva ubicación
+COPY services/python-scripts/weather_current.py .
 
 CMD ["python", "weather_current.py"]

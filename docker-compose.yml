@@ -1,3 +1,88 @@
+# version: "3.8"
+
+# services:
+#   influxdb:
+#     image: influxdb:2.7
+#     container_name: influxdb
+#     ports:
+#       - "${INFLUXDB_PORT}:8086"
+#     volumes:
+#       - influxdb_data:/var/lib/influxdb2
+#       - ./init-influxdb.sh:/docker-entrypoint-initdb.d/init-influxdb.sh
+#       - shared-data:/shared
+#     environment:
+#       - DOCKER_INFLUXDB_INIT_MODE=setup
+#       - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_USERNAME}
+#       - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_PASSWORD}
+#       - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG}
+#       - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET}
+#       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN}
+#     restart: unless-stopped
+#     healthcheck:
+#       test: ["CMD", "influx", "ping"]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 5
+
+#   grafana:
+#     image: grafana/grafana:latest
+#     container_name: grafana
+#     ports:
+#       - "${GRAFANA_PORT}:3000"
+#     volumes:
+#       - grafana_data:/var/lib/grafana
+#       # Archivos de configuración YAML
+#       - ./pia/docker/grafana_dashboards.yaml:/etc/grafana/provisioning/dashboards.yaml
+#       - ./pia/docker/grafana_alerts.yaml:/etc/grafana/provisioning/alerting.yaml
+#       # Directorios con los JSON (ya creados en bda/)
+#       - ./bda/grafana/dashboards:/var/lib/grafana/dashboards
+#       - ./bda/grafana/alertas:/var/lib/grafana/alertas
+#     depends_on:
+#       - influxdb
+#     environment:
+#       - GF_SECURITY_ADMIN_USER=${GRAFANA_USER}
+#       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+#       - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+
+#   nodered:
+#     build:
+#       context: ../..
+#       dockerfile: pia/docker/Dockerfile.node-red
+#     container_name: nodered
+#     ports:
+#       - "${NODERED_PORT}:1880"
+#     volumes:
+#       - nodered_data:/data
+#       - shared-data:/shared
+#     depends_on:
+#       - influxdb
+#     environment:
+#       - INFLUXDB_URL=http://influxdb:8086
+#       - INFLUXDB_BUCKET=${INFLUXDB_BUCKET}
+#       - INFLUXDB_ORG=${INFLUXDB_ORG}
+#       - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
+
+#   pandas_script:
+#     build:
+#       context: ../..
+#       dockerfile: pia/docker/Dockerfile.pandas
+#     container_name: pandas_script
+#     depends_on:
+#       - influxdb
+#     volumes:
+#       - shared-data:/shared
+
+# volumes:
+#   influxdb_data:
+#   grafana_data:
+#   nodered_data:
+#   shared-data:
+
+
+
+
+
+
 version: "3.8"
 
 services:
@@ -8,7 +93,7 @@ services:
       - "${INFLUXDB_PORT}:8086"
     volumes:
       - influxdb_data:/var/lib/influxdb2
-      - ./init-influxdb.sh:/docker-entrypoint-initdb.d/init-influxdb.sh
+      - ./scripts/init-influxdb.sh:/docker-entrypoint-initdb.d/init-influxdb.sh
       - shared-data:/shared
     environment:
       - DOCKER_INFLUXDB_INIT_MODE=setup
@@ -31,12 +116,10 @@ services:
       - "${GRAFANA_PORT}:3000"
     volumes:
       - grafana_data:/var/lib/grafana
-      # Archivos de configuración YAML
-      - ./pia/docker/grafana_dashboards.yaml:/etc/grafana/provisioning/dashboards.yaml
-      - ./pia/docker/grafana_alerts.yaml:/etc/grafana/provisioning/alerting.yaml
-      # Directorios con los JSON (ya creados en bda/)
-      - ./bda/grafana/dashboards:/var/lib/grafana/dashboards
-      - ./bda/grafana/alertas:/var/lib/grafana/alertas
+      - ./services/grafana/provisioning/grafana_dashboards.yaml:/etc/grafana/provisioning/dashboards.yaml
+      - ./services/grafana/provisioning/grafana_alerts.yaml:/etc/grafana/provisioning/alerting.yaml
+      - ./services/grafana/provisioning/dashboards:/var/lib/grafana/dashboards
+      - ./services/grafana/provisioning/alerting:/var/lib/grafana/alerting
     depends_on:
       - influxdb
     environment:
@@ -46,13 +129,13 @@ services:
 
   nodered:
     build:
-      context: ../..
-      dockerfile: pia/docker/Dockerfile.node-red
+      context: ./services/node-red
+      dockerfile: Dockerfile   # ✅ Ahora correcto, coincide con tu estructura
     container_name: nodered
     ports:
       - "${NODERED_PORT}:1880"
     volumes:
-      - nodered_data:/data
+      - ./services/node-red:/data
       - shared-data:/shared
     depends_on:
       - influxdb
@@ -64,8 +147,8 @@ services:
 
   pandas_script:
     build:
-      context: ../..
-      dockerfile: pia/docker/Dockerfile.pandas
+      context: ./services/python-scripts   # ✅ importante: ruta exacta donde está tu Dockerfile
+      dockerfile: Dockerfile               # ✅ y el nombre correcto
     container_name: pandas_script
     depends_on:
       - influxdb

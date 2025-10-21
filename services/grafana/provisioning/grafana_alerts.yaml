@@ -1,5 +1,12 @@
+# apiVersion: 1
+
+# templates:
+#   - name: Reglas de alerta personalizadas
+#     file: /var/lib/grafana/alertas/reglas-alertas.json
+
+
 apiVersion: 1
 
 templates:
   - name: Reglas de alerta personalizadas
-    file: /var/lib/grafana/alertas/reglas-alertas.json
+    file: /var/lib/grafana/alerting/reglas-alertas.json
