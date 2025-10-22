@@ -96,18 +96,26 @@ Se han creado los siguientes equipos con sus permisos:
 
 ---
 
-##  Cómo ejecutar el script Python
+## Cómo ejecutar el script Python
 
-0. Ubicate en la raiz del repositorio 
+0. Ubícate en la raíz del repositorio.
+
 1. Crea el archivo `.env` a partir del `.env.example` con tus claves.
+
 2. Activa el entorno virtual:
 
     ```bash
     source venv/bin/activate
+    ```
+
 3. Instala dependencias si es necesario:
+
     ```bash
     pip install -r requirements.txt
+    ```
+
 4. Ejecuta el script:
+
     ```bash
-    python bda/scripts_python/weather_current.py
+    python services/python-scripts/weather_current.py
     ```
